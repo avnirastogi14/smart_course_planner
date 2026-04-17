@@ -19,6 +19,10 @@ class PrereqDelete(BaseModel):
     prerequisite: str
 
 
+# @router.delete("")
+# def delete_prerequisite(data: PrereqDelete):
+#     return delete_prereq(data.course, data.prerequisite)
+
 @router.delete("")
-def delete_prerequisite(data: PrereqDelete):
-    return delete_prereq(data.course, data.prerequisite)
+def delete_prerequisite(course: str, prerequisite: str):
+    return delete_prereq(course, prerequisite)
