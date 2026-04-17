@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from app.services.prerequisite_service import get_all_prereqs, add_prereq
+from pydantic import BaseModel
+from app.services.prerequisite_service import get_all_prereqs, add_prereq, delete_prereq
 
 router = APIRouter(prefix="/prerequisites")
-
 
 @router.get("")
 def get_prereqs():
@@ -13,16 +13,12 @@ def get_prereqs():
 def add_prereq_route(data: dict):
     return add_prereq(data)
 
-    from fastapi import APIRouter
-from pydantic import BaseModel
-
-router = APIRouter()
 
 class PrereqDelete(BaseModel):
     course: str
     prerequisite: str
 
-@router.delete("/prerequisites")
+
+@router.delete("")
 def delete_prerequisite(data: PrereqDelete):
-    # delete from DB
-    return {"message": "Deleted successfully"}
+    return delete_prereq(data.course, data.prerequisite)
