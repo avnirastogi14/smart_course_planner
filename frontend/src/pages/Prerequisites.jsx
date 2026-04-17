@@ -8,13 +8,26 @@ export default function Prerequisites() {
   const [data, setData] = useState([]);
 
   const load = async () => {
-    const res = await getPrereqs();
-    setData(res);
+    try {
+      const res = await getPrereqs();
+      setData(res);
+    } catch (err) {
+      console.error("Failed to load prerequisites:", err);
+    }
   };
 
   useEffect(() => {
     load();
   }, []);
+
+  // 🔥 NEW: handle delete (instant UI update)
+  const handleDeleteSuccess = (course, prerequisite) => {
+    setData((prev) =>
+      prev.filter(
+        (p) => !(p.course === course && p.prerequisite === prerequisite)
+      )
+    );
+  };
 
   return (
     <div className="page">
@@ -33,7 +46,10 @@ export default function Prerequisites() {
 
       <div className="card" style={{ marginTop: 20 }}>
         <h3>List</h3>
-        <PrerequisitesList data={data} />
+        <PrerequisitesList
+          data={data}
+          onDeleteSuccess={handleDeleteSuccess}   // ✅ IMPORTANT
+        />
       </div>
     </div>
   );

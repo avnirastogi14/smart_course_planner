@@ -31,10 +31,8 @@ export default function PrerequisitesList({ data, onDeleteSuccess }) {
 
       await deletePrerequisite(course, prerequisite);
 
-      // 🔥 update UI without reload
-      if (onDeleteSuccess) {
-        onDeleteSuccess(course, prerequisite);
-      }
+      // update parent state
+      onDeleteSuccess(course, prerequisite);
     } catch (err) {
       console.error("Delete failed:", err);
       alert("Failed to delete prerequisite");
@@ -60,7 +58,7 @@ export default function PrerequisitesList({ data, onDeleteSuccess }) {
       </thead>
 
       <tbody>
-        {data.map((p, i) => {
+        {data.map((p) => {
           const course = coursesMap[p.course];
           const prereq = coursesMap[p.prerequisite];
           const key = `${p.course}-${p.prerequisite}`;
@@ -74,7 +72,9 @@ export default function PrerequisitesList({ data, onDeleteSuccess }) {
 
               <td style={td}>
                 <button
-                  onClick={() => handleDelete(p.course, p.prerequisite)}
+                  onClick={() =>
+                    handleDelete(p.course, p.prerequisite)
+                  }
                   style={deleteBtn}
                   disabled={loadingDelete === key}
                 >
