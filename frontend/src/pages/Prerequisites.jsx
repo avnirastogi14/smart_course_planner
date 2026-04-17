@@ -121,7 +121,6 @@ export default function Prerequisites() {
 
       {/* LIST */}
       <div className="card" style={{ marginTop: 20 }}>
-        <h3>Prerequisites List</h3>
 
         {loading ? (
           <p>Loading list...</p>
