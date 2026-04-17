@@ -1,7 +1,7 @@
 from pymongo import MongoClient
-import os
 
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+MONGO_URI = "mongodb+srv://admin:<admin123>@cluster0.qim0t4s.mongodb.net/?appName=Cluster0"
+
 DB_NAME = "test"
 
 client = MongoClient(MONGO_URI)
