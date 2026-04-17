@@ -48,7 +48,7 @@ export default function Prerequisites() {
         <h3>List</h3>
         <PrerequisitesList
           data={data}
-          onDeleteSuccess={handleDeleteSuccess}   // ✅ IMPORTANT
+          onDeleteSuccess={handleDeleteSuccess} 
         />
       </div>
     </div>
