@@ -1,99 +1,94 @@
-// // import { useEffect, useState } from "react";
-// // import { getCourses } from "../../api/courseApi";
-// // import { addPrereq } from "../../api/prereqApi";
+import { useEffect, useState } from "react";
+import { getCourses } from "../../api/courseApi";
+import { addPrereq } from "../../api/prereqApi";
 
-// // export default function AddPrerequisitesForm({ onAdd }) {
-// //   const [courses, setCourses] = useState([]);
-// //   const [course, setCourse] = useState("");
-// //   const [prereq, setPrereq] = useState("");
-// //   const [loading, setLoading] = useState(false);
+export default function AddPrerequisitesForm({ onAdd }) {
+  const [courses, setCourses] = useState([]);
+  const [course, setCourse] = useState("");
+  const [prereq, setPrereq] = useState("");
+  const [loading, setLoading] = useState(false);
 
-// //   useEffect(() => {
-// //     loadCourses();
-// //   }, []);
+  useEffect(() => {
+    loadCourses();
+  }, []);
 
-// //   const loadCourses = async () => {
-// //     try {
-// //       const data = await getCourses();
-// //       setCourses(data);
-// //     } catch (err) {
-// //       console.error("Error loading courses:", err);
-// //     }
-// //   };
+  const loadCourses = async () => {
+    try {
+      const data = await getCourses();
+      setCourses(data);
+    } catch (err) {
+      console.error("Error loading courses:", err);
+    }
+  };
 
-// //   const handleAdd = async () => {
-// //     console.log("Submitting:", { course, prereq });
+  const handleAdd = async () => {
+    if (!course || !prereq) {
+      alert("Select both course and prerequisite");
+      return;
+    }
 
-// //     if (!course || !prereq) {
-// //       alert("Select both course and prerequisite");
-// //       return;
-// //     }
+    try {
+      setLoading(true);
 
-// //     try {
-// //       setLoading(true);
+      await addPrereq({
+        course: String(course),
+        prerequisite: String(prereq),
+      });
 
-// //       const res = await addPrereq({
-// //         course: String(course),
-// //         prerequisite: String(prereq),
-// //       });
+      alert("✅ Prerequisite added!");
 
-// //       console.log("Response:", res);
+      setCourse("");
+      setPrereq("");
 
-// //       alert("✅ Prerequisite added!");
+      if (onAdd) onAdd(); // 🔥 IMPORTANT
+    } catch (err) {
+      console.error("Add error:", err);
+      alert("❌ Failed to add prerequisite");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-// //       // reset
-// //       setCourse("");
-// //       setPrereq("");
+  return (
+    <div>
+      <h3>Add Prerequisite</h3>
 
-// //       if (onAdd) onAdd(); // 🔥 trigger refresh
-// //     } catch (err) {
-// //       console.error("Add error:", err);
-// //       alert("❌ Failed to add prerequisite");
-// //     } finally {
-// //       setLoading(false);
-// //     }
-// //   };
+      <label>
+        Course
+        <select
+          value={course}
+          onChange={(e) => setCourse(e.target.value)}
+        >
+          <option value="">Select course</option>
+          {courses.map((c) => (
+            <option key={c.course_id} value={c.course_id}>
+              {c.course_id} — {c.name}
+            </option>
+          ))}
+        </select>
+      </label>
 
-// //   return (
-// //     <div>
-// //       <h3>Add Prerequisite</h3>
+      <label>
+        Prerequisite
+        <select
+          value={prereq}
+          onChange={(e) => setPrereq(e.target.value)}
+        >
+          <option value="">Select prerequisite</option>
+          {courses.map((c) => (
+            <option key={c.course_id} value={c.course_id}>
+              {c.course_id} — {c.name}
+            </option>
+          ))}
+        </select>
+      </label>
 
-// //       <label>
-// //         Course
-// //         <select
-// //           value={course}
-// //           onChange={(e) => setCourse(e.target.value)}
-// //         >
-// //           <option value="">Select course</option>
-// //           {courses.map((c) => (
-// //             <option key={c.course_id} value={c.course_id}>
-// //               {c.course_id} — {c.name}
-// //             </option>
-// //           ))}
-// //         </select>
-// //       </label>
-
-// //       <label>
-// //         Prerequisite
-// //         <select
-// //           value={prereq}
-// //           onChange={(e) => setPrereq(e.target.value)}
-// //         >
-// //           <option value="">Select prerequisite</option>
-// //           {courses.map((c) => (
-// //             <option key={c.course_id} value={c.course_id}>
-// //               {c.course_id} — {c.name}
-// //             </option>
-// //           ))}
-// //         </select>
-// //       </label>
-
-// //       <button className="primary-btn" onClick={handleAdd}>
-// //         {loading ? "Adding..." : "Add"}
-// //       </button>
-// //     </div>
-// //   );
-// // }
+      <button className="primary-btn" onClick={handleAdd}>
+        {loading ? "Adding..." : "Add"}
+      </button>
+    </div>
+  );
+}
 
 // import React, { useState } from "react";
 
@@ -159,59 +154,59 @@
 
 // export default AddPrerequisitesForm;
 
-import React, { useState } from "react";
+// import React, { useState } from "react";
 
-const BASE_URL = "https://smart-course-planner.onrender.com";
+// const BASE_URL = "https://smart-course-planner.onrender.com";
 
-export default function AddPrerequisitesForm({ onAdd }) {
-  const [course, setCourse] = useState("");
-  const [prerequisite, setPrerequisite] = useState("");
+// export default function AddPrerequisitesForm({ onAdd }) {
+//   const [course, setCourse] = useState("");
+//   const [prerequisite, setPrerequisite] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
 
-    if (!course || !prerequisite) return;
+//     if (!course || !prerequisite) return;
 
-    try {
-      await fetch(`${BASE_URL}/prerequisites`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          course,
-          prerequisite,
-        }),
-      });
+//     try {
+//       await fetch(`${BASE_URL}/prerequisites`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           course,
+//           prerequisite,
+//         }),
+//       });
 
-      setCourse("");
-      setPrerequisite("");
+//       setCourse("");
+//       setPrerequisite("");
 
-      if (onAdd) onAdd();
-    } catch (err) {
-      console.error("Add error:", err);
-    }
-  };
+//       if (onAdd) onAdd();
+//     } catch (err) {
+//       console.error("Add error:", err);
+//     }
+//   };
 
-  return (
-    <div>
-      <h3>Add Prerequisite</h3>
+//   return (
+//     <div>
+//       <h3>Add Prerequisite</h3>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="Course (e.g. CS201)"
-          value={course}
-          onChange={(e) => setCourse(e.target.value)}
-        />
+//       <form onSubmit={handleSubmit}>
+//         <input
+//           placeholder="Course (e.g. CS201)"
+//           value={course}
+//           onChange={(e) => setCourse(e.target.value)}
+//         />
 
-        <input
-          placeholder="Prerequisite (e.g. CS101)"
-          value={prerequisite}
-          onChange={(e) => setPrerequisite(e.target.value)}
-        />
+//         <input
+//           placeholder="Prerequisite (e.g. CS101)"
+//           value={prerequisite}
+//           onChange={(e) => setPrerequisite(e.target.value)}
+//         />
 
-        <button type="submit">Add</button>
-      </form>
-    </div>
-  );
-}
+//         <button type="submit">Add</button>
+//       </form>
+//     </div>
+//   );
+// }
