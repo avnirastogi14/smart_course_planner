@@ -9,3 +9,9 @@ export const addPrereq = async (data) => {
   const res = await client.post("/prerequisites", data);
   return res.data;
 };
+
+export const deletePrerequisite = async (course, prerequisite) => {
+  await axios.delete(`${API}/prerequisites`, {
+    data: { course, prerequisite },
+  });
+};

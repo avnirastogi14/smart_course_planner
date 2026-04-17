@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { getCourses } from "../../api/courseApi";
+import { deletePrerequisite } from "../../api/prereqApi";
 
-export default function PrerequisitesList({ data }) {
+export default function PrerequisitesList({ data, onDeleteSuccess }) {
   const [coursesMap, setCoursesMap] = useState({});
+  const [loadingDelete, setLoadingDelete] = useState(null);
 
   useEffect(() => {
     loadCourses();
@@ -23,6 +25,24 @@ export default function PrerequisitesList({ data }) {
     }
   };
 
+  const handleDelete = async (course, prerequisite) => {
+    try {
+      setLoadingDelete(`${course}-${prerequisite}`);
+
+      await deletePrerequisite(course, prerequisite);
+
+      // 🔥 update UI without reload
+      if (onDeleteSuccess) {
+        onDeleteSuccess(course, prerequisite);
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete prerequisite");
+    } finally {
+      setLoadingDelete(null);
+    }
+  };
+
   if (!data || data.length === 0) {
     return <p>No prerequisites found</p>;
   }
@@ -35,6 +55,7 @@ export default function PrerequisitesList({ data }) {
           <th style={th}>Course Name</th>
           <th style={th}>Prerequisite Code</th>
           <th style={th}>Prerequisite Name</th>
+          <th style={th}>Action</th>
         </tr>
       </thead>
 
@@ -42,13 +63,24 @@ export default function PrerequisitesList({ data }) {
         {data.map((p, i) => {
           const course = coursesMap[p.course];
           const prereq = coursesMap[p.prerequisite];
+          const key = `${p.course}-${p.prerequisite}`;
 
           return (
-            <tr key={i}>
+            <tr key={key}>
               <td style={td}>{p.course}</td>
               <td style={td}>{course?.name || "-"}</td>
               <td style={td}>{p.prerequisite}</td>
               <td style={td}>{prereq?.name || "-"}</td>
+
+              <td style={td}>
+                <button
+                  onClick={() => handleDelete(p.course, p.prerequisite)}
+                  style={deleteBtn}
+                  disabled={loadingDelete === key}
+                >
+                  {loadingDelete === key ? "Deleting..." : "Delete"}
+                </button>
+              </td>
             </tr>
           );
         })}
@@ -66,4 +98,13 @@ const th = {
 const td = {
   padding: "10px",
   borderBottom: "1px solid #e5e7eb",
+};
+
+const deleteBtn = {
+  padding: "6px 10px",
+  background: "#ef4444",
+  color: "white",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer",
 };
